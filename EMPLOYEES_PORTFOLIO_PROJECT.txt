@@ -1,0 +1,67 @@
+#Find details of employees under attrition having 5+ years experiences in between the age group of 27-35
+
+SELECT *
+FROM employees_attrition
+WHERE TotalWorkingYear > 5 
+AND age BETWEEN 27 AND 35
+
+#Employees having maximum and minimum salary working in different departmant who recieved less than 13% salary hike
+
+SELECT employeeid
+,departmant
+,MAX(MonthlyIncome)	
+,MIN(MonthlyIncome)
+FROM employees_attrition
+WHERE  percentsalaryhike < 13
+GROUP BY department	
+
+#Calculate 	the average montly income of all employees who worked more than 3 years who educated background is medical
+
+SELECT AVG(MonthlyIncome) 
+FROM  employees_attrition  		
+WHERE TotalWorkingYear >3 
+AND EducationField = 'medical'
+
+# Identify the total no of male and females employees under attritions whose marital status is married and haven't recieved promotion in the last 2 years
+
+SELECT gender
+,COUNT(employeeid) 
+FROM employees_attrition
+WHERE MaritalStatus = 'Married'
+    AND YearsSinceLastPromotion = 2
+    AND attrition = 'Yes'
+GROUP by 1						
+ 
+#Employees with max performance rating but no promotion for 4 year and above
+
+SELECT employeeid
+FROM employees_attrition
+WHERE YearsSinceLastPromotion >= 4
+      AND (SELECT MAX(PerformansRating)
+		   FROM employees_attrition)
+    
+ #Who max and min  percentage  of salary hike
+ 
+ SELECT employeeid
+ ,YearsAtCompany
+ ,PerformanceRating
+ ,YearsSinceLastPromotion
+ ,MAX(percentsalaryhike) AS MAXIMUM
+ ,MIN(percentsalaryhike) AS MINIMUM
+ FROM employees_attrition
+ GROUP BY employeeid 
+		,YearsAtCompany
+		,PerformanceRating
+		,YearsSinceLastPromotion
+ORDER BY   MAXIMUM DESC
+           ,MINIMUM ASC
+  
+# Employees working overtime but get given minimum salary hike and more than 5 years 
+  
+  SELECT employeeid
+  FROM employees_attrition
+  WHERE YearsAtCompany > 5 
+  AND  percentsalaryhike = (SELECT MIN(percentsalaryhike) 
+						FROM employees_attrition )
+  AND 	overtime = 'Yes'                        
+  GROUP BY 1
